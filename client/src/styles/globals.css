@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap');
+
+:root {
+  /* ── Brand colors ──────────────────────── */
+  --bg-page: #F4F5F7;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #F9FAFB;
+
+  /* Forest greens */
+  --forest-dk: #0F3D2E;
+  --forest: #1B5E3F;
+  --forest-md: #2E7D5B;
+  --sage: #88B19A;
+  --mint: #D4E9D8;
+
+  /* Text */
+  --text-primary: #0D1B14;
+  --text-secondary: #5A6B62;
+  --text-tertiary: #A8B0B1;
+  --text-on-dark: #F4F1E8;
+
+  /* Borders */
+  --border-subtle: #EEF0F2;
+  --border-default: #E4E7EA;
+  --border-strong: #C8CFD3;
+
+  /* Gradients */
+  --gradient-forest: linear-gradient(135deg, #1B5E3F 0%, #0F3D2E 100%);
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* Fonts */
+  --font-serif: 'Instrument Serif', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  /* Shadows */
+  --shadow-sm: 0 4px 12px rgba(15,61,46,0.06);
+  --shadow-md: 0 4px 20px rgba(15,61,46,0.08);
+  --shadow-lg: 0 20px 50px rgba(15,61,46,0.15);
+  --shadow-xl: 0 24px 60px rgba(15,61,46,0.2);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input, textarea, select {
+  font-family: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-page); }
+::-webkit-scrollbar-thumb { background: var(--sage); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--forest); }

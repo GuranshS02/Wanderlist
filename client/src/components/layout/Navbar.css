@@ -1,0 +1,114 @@
+.nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 28px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav--solid {
+  position: sticky;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.3px;
+}
+
+.nav--transparent .nav-logo { color: #fff; }
+.nav--solid .nav-logo { color: var(--forest-dk); }
+
+.nav-logo-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.nav--transparent .nav-logo-icon { border: 1.5px solid rgba(255,255,255,0.4); }
+.nav--solid .nav-logo-icon { border: 1.5px solid var(--forest); }
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+}
+
+.nav-link {
+  font-size: 14px;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+  position: relative;
+}
+.nav--transparent .nav-link { color: rgba(255,255,255,0.85); }
+.nav--solid .nav-link { color: var(--text-secondary); }
+
+.nav--transparent .nav-link:hover { color: #fff; }
+.nav--solid .nav-link:hover { color: var(--forest); }
+
+.nav-link--active {
+  font-weight: 600;
+}
+.nav--transparent .nav-link--active { color: #fff; }
+.nav--solid .nav-link--active { color: var(--forest); }
+
+.nav-link--active::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+}
+.nav--transparent .nav-link--active::after { background: #fff; }
+.nav--solid .nav-link--active::after { background: var(--forest); }
+
+.nav-cta {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 24px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.nav--transparent .nav-cta {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.25);
+}
+.nav--transparent .nav-cta:hover {
+  background: rgba(255,255,255,0.25);
+  transform: translateY(-1px);
+}
+
+.nav--solid .nav-cta {
+  background: var(--forest);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(27,94,63,0.3);
+}
+.nav--solid .nav-cta:hover {
+  background: var(--forest-dk);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav { padding: 20px 20px; }
+}
