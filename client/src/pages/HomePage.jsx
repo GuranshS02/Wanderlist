@@ -1,45 +1,10 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { itineraryApi } from '../lib/itineraryApi';
 import { Link } from 'react-router-dom';
 import './HomePage.css';
 
-const ITINERARIES = [
-  {
-    id: 1, title: 'Sacred Temples of Kyoto', location: 'Kyoto, Japan', flag: '🇯🇵',
-    days: 10, stops: 12, rating: 4.9, reviews: 214, price: 18,
-    img: 'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=800&q=80',
-    badge: 'Bestseller',
-  },
-  {
-    id: 2, title: 'Amalfi Coast Hidden Coves', location: 'Amalfi, Italy', flag: '🇮🇹',
-    days: 7, stops: 9, rating: 4.8, reviews: 189, price: 22,
-    img: 'https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=800&q=80',
-    badge: null,
-  },
-  {
-    id: 3, title: 'Backpacking SE Asia', location: 'Bangkok, Thailand', flag: '🌏',
-    days: 21, stops: 18, rating: 5.0, reviews: 342, price: 29,
-    img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80',
-    badge: 'Top rated',
-  },
-  {
-    id: 4, title: 'Sahara & Marrakech', location: 'Marrakech, Morocco', flag: '🇲🇦',
-    days: 9, stops: 8, rating: 4.7, reviews: 97, price: 16,
-    img: 'https://images.unsplash.com/photo-1489493887464-892be6d1daae?w=800&q=80',
-    badge: null,
-  },
-  {
-    id: 5, title: 'New Zealand Road Trip', location: 'Queenstown, NZ', flag: '🇳🇿',
-    days: 14, stops: 15, rating: 4.9, reviews: 156, price: 24,
-    img: 'https://images.unsplash.com/photo-1469521669194-babb45599def?w=800&q=80',
-    badge: null,
-  },
-  {
-    id: 6, title: 'Patagonia W Trek', location: 'Torres del Paine, Chile', flag: '🇨🇱',
-    days: 12, stops: 11, rating: 4.8, reviews: 88, price: 20,
-    img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80',
-    badge: null,
-  },
-];
+
 
 const STEPS = [
   { n: '01', t: 'Browse curated itineraries', d: 'Filter by destination, budget, duration, or travel style. Find plans made by real travelers.' },
@@ -67,12 +32,20 @@ export default function HomePage() {
   const [searchDuration, setSearchDuration] = useState('');
   const [searchBudget, setSearchBudget] = useState('');
 
-  const itemsPerSlide = 3;
-  const totalSlides = Math.ceil(ITINERARIES.length / itemsPerSlide);
-  const visibleItems = ITINERARIES.slice(
-    carouselIdx * itemsPerSlide,
-    carouselIdx * itemsPerSlide + itemsPerSlide
-  );
+  // Fetch top trending itineraries from the real API
+const { data, isLoading } = useQuery({
+queryKey: ['itineraries', 'home-featured'],
+queryFn: () => itineraryApi.list({ sort: 'popular', limit: 6 }),
+staleTime: 5 * 60 * 1000, // Cache for 5 min — featured doesn't change often
+});
+
+const ITINERARIES = data?.itineraries || [];
+const itemsPerSlide = 3;
+const totalSlides = Math.max(1, Math.ceil(ITINERARIES.length / itemsPerSlide));
+const visibleItems = ITINERARIES.slice(
+carouselIdx * itemsPerSlide,
+carouselIdx * itemsPerSlide + itemsPerSlide
+);
 
   return (
     <div className="home">
@@ -136,30 +109,53 @@ export default function HomePage() {
         </p>
 
         <div className="cards-grid">
-          {visibleItems.map(it => (
-            <Link to={`/itinerary/${it.id}`} key={it.id} className="card">
-              <div className="card-img-wrap">
-                <img src={it.img} alt={it.title} className="card-img" />
-                {it.badge && <div className="card-badge">{it.badge}</div>}
-                <div className="card-flag">{it.flag}</div>
-              </div>
-              <div className="card-info">
-                <div className="card-location">{it.location}</div>
-                <div className="card-stats">
-                  <span className="stat">📅 {it.days}d</span>
-                  <span className="stat">📍 {it.stops}</span>
-                </div>
-              </div>
-              <h3 className="card-title">{it.title}</h3>
-              <div className="card-bottom">
-                <div>
-                  <div className="card-price">${it.price}</div>
-                  <div className="card-price-sub">One-time</div>
-                </div>
-                <div className="card-rating">★ {it.rating}</div>
-              </div>
-            </Link>
-          ))}
+{isLoading ? (
+  // Show skeleton loaders while fetching
+  Array.from({ length: 3 }).map((_, i) => (
+    <div key={i} className="card-skeleton" />
+  ))
+) : ITINERARIES.length === 0 ? (
+  <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+    No itineraries yet. Check back soon!
+  </div>
+) : (
+  visibleItems.map(it => (
+    <Link
+      to={`/itinerary/${it.slug || it._id}`}
+      key={it._id}
+      className="card"
+    >
+      <div className="card-img-wrap">
+        <img
+          src={it.coverImage || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&q=80'}
+          alt={it.title}
+          className="card-img"
+        />
+        {it.badge && <div className="card-badge">{it.badge}</div>}
+        <div className="card-flag">{it.flag}</div>
+      </div>
+      <div className="card-info">
+        <div className="card-location">
+          {it.city ? `${it.city}, ${it.country}` : it.country}
+        </div>
+        <div className="card-stats">
+          <span className="stat">📅 {it.days}d</span>
+          <span className="stat">📍 {it.stops}</span>
+        </div>
+      </div>
+      <h3 className="card-title">{it.title}</h3>
+      <div className="card-bottom">
+        <div>
+          <div className="card-price">${it.price}</div>
+          <div className="card-price-sub">One-time</div>
+        </div>
+        {it.averageRating > 0 && (
+          <div className="card-rating">★ {it.averageRating.toFixed(1)}</div>
+        )}
+      </div>
+    </Link>
+  ))
+)}
         </div>
 
         <div className="carousel-dots">
