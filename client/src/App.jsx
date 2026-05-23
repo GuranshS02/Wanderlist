@@ -5,10 +5,11 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import useAuthStore from './store/authStore';
+import BrowsePage from './pages/BrowsePage';
+import ItineraryPage from './pages/ItineraryPage';
+import ScrollToTop from './components/utils/ScrollToTop';
 
 // Placeholders
-const BrowsePage = () => <div style={{ padding: '120px 40px', textAlign: 'center' }}><h1>🔍 Browse — coming soon</h1></div>;
-const ItineraryPage = () => <div style={{ padding: '120px 40px', textAlign: 'center' }}><h1>📋 Itinerary detail — coming soon</h1></div>;
 const NotFoundPage = () => <div style={{ padding: '120px 40px', textAlign: 'center' }}><h1>404</h1><p>Lost in space</p></div>;
 
 function App() {
@@ -20,6 +21,8 @@ function App() {
   }, [restoreSession]);
 
   return (
+    <>
+     <ScrollToTop />
     <Routes>
       {/* Auth pages have no Layout (no navbar/footer) */}
       <Route path="/login" element={<LoginPage />} />
@@ -33,6 +36,7 @@ function App() {
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
+    </>
   );
 }
 
