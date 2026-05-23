@@ -2,11 +2,12 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import connectDB from './config/db.js';
+import authRoutes from './routes/auth.js';
 
 dotenv.config();
 
-// Connect to database FIRST
 connectDB();
 
 const app = express();
@@ -19,14 +20,15 @@ app.use(cors({
   credentials: true,
 }));
 
-// Body parsing middleware
+// Body parsing + cookies
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Routes
 app.get('/', (req, res) => {
   res.json({
-    message: '🗺️ Wanderlist API is running!',
+    message: '🌿 Wanderlist API is running!',
     version: '1.0.0',
     status: 'healthy',
   });
@@ -40,12 +42,15 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 404 handler - must come after all routes
+// Auth routes
+app.use('/api/auth', authRoutes);
+
+// 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// Global error handler - must be last
+// Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({

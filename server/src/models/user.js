@@ -75,17 +75,15 @@ const userSchema = new mongoose.Schema(
 
 // ─── INDEXES ─────────────────────────────────────────
 // Makes searching by email fast (also enforces uniqueness)
-userSchema.index({ email: 1 });
+// Email index is auto-created by `unique: true` on the field
 userSchema.index({ createdAt: -1 });
 
 // ─── MIDDLEWARE (runs before saving) ─────────────────
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function () {
   // Only hash password if it was changed
-  if (!this.isModified('password')) return next();
-
+  if (!this.isModified('password')) return;
   // Hash with cost factor 12 (strong but not too slow)
   this.password = await bcrypt.hash(this.password, 12);
-  next();
 });
 
 // ─── INSTANCE METHODS ────────────────────────────────
