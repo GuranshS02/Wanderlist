@@ -550,3 +550,15 @@
   font-size: 14px;
 }
 .back-to-browse:hover { background: var(--forest-dk); }
+
+.buy-owned-badge {
+  background: var(--mint);
+  color: var(--forest-dk);
+  border: 1.5px solid var(--sage);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 24px;
+}

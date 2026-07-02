@@ -454,3 +454,93 @@
   cursor: pointer;
 }
 .clear-filters-btn:hover { background: var(--forest-dk); }
+
+/* ─── MOBILE TWEAKS ─── */
+@media (max-width: 700px) {
+  /* Tighten hero padding */
+  .browse-hero {
+    padding: 90px 20px 60px;
+  }
+  .browse-title {
+    font-size: clamp(36px, 9vw, 48px);
+    letter-spacing: -1px;
+  }
+  .browse-sub {
+    font-size: 14px;
+  }
+
+  /* Stack the search + sort vertically */
+  .browse-filter-bar {
+    flex-direction: column;
+    padding: 0 16px;
+    gap: 10px;
+    margin-top: -30px;
+  }
+  .search-input-wrap {
+    width: 100%;
+  }
+  .search-input {
+    padding: 14px 50px;
+    font-size: 16px; /* prevents iOS auto-zoom */
+  }
+  .sort-select {
+    width: 100%;
+    padding: 14px 18px;
+    font-size: 15px;
+  }
+
+  /* Tags row: horizontal scroll instead of 3 wrapped lines */
+  .browse-tags {
+    padding: 0 16px;
+    margin-top: 24px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .tags-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin: 0 -16px;        /* let the scroller bleed to screen edges */
+    padding: 0 16px 8px;
+  }
+  .tags-row::-webkit-scrollbar { display: none; }
+  .tag-pill {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  .clear-filters {
+    align-self: flex-start;
+    padding: 4px 0;
+  }
+
+  /* Tighten the results section */
+  .browse-results {
+    margin-top: 28px;
+    padding: 0 16px 60px;
+  }
+  .results-meta {
+    margin-bottom: 16px;
+  }
+
+  /* Card image — slightly shorter on mobile */
+  .card-img-wrap {
+    height: 200px;
+  }
+  .card-title {
+    font-size: 20px;
+  }
+
+  /* Pagination — stack a bit nicer */
+  .pagination {
+    gap: 10px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+  .page-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+}

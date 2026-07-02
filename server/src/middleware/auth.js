@@ -1,5 +1,5 @@
 import { verifyAccessToken } from '../utils/tokens.js';
-import User from '../models/User.js';
+import User from '../models/user.js';
 
 /**
  * Middleware that protects routes by verifying the access token.

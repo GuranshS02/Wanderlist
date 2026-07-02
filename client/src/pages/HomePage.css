@@ -478,13 +478,17 @@
   padding: 70px 60px;
   position: relative;
   overflow: hidden;
-  display: grid;
-  grid-template-columns: 1.4fr 1fr;
+  display: grid !important;
+  grid-template-columns: 1.4fr 1fr !important;
   gap: 40px;
   align-items: center;
 }
-@media(max-width: 900px) {
-  .creator-card { grid-template-columns: 1fr; padding: 50px 32px; }
+
+@media (max-width: 900px) {
+  .creator-card {
+    grid-template-columns: 1fr !important;
+    padding: 50px 32px;
+  }
 }
 .creator-card::before {
   content: '';
@@ -555,6 +559,7 @@
   cursor: pointer;
   transition: all var(--transition-base);
   display: inline-flex; align-items: center; gap: 8px;
+  border: none;
 }
 .creator-btn:hover {
   background: var(--mint);
@@ -630,4 +635,77 @@
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
+}
+
+/* ─── MOBILE: HERO + SEARCH ─── */
+@media (max-width: 700px) {
+  .hero-wrap { padding: 8px; }
+  .hero {
+    height: auto;
+    min-height: 560px;
+  }
+  .hero-content {
+    padding: 100px 24px 80px;
+  }
+  .hero-title {
+    font-size: clamp(38px, 11vw, 52px);
+    letter-spacing: -1px;
+  }
+  .hero-desc {
+    font-size: 14px;
+    max-width: 100%;
+  }
+  .hero-search-pill {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .hero-search-pill input { width: 100%; }
+
+  /* Stack the search bar vertically */
+  .search-bar {
+    flex-direction: column;
+    border-radius: var(--radius-lg);
+    padding: 12px;
+    margin: -30px 16px 0;
+    gap: 0;
+  }
+  .search-field {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+  }
+  .search-field:not(:last-of-type)::after {
+    /* Replace vertical divider with a horizontal one */
+    right: 14px;
+    left: 14px;
+    top: auto;
+    bottom: 0;
+    transform: none;
+    width: auto;
+    height: 1px;
+  }
+  .search-field-input { font-size: 15px; }
+  .search-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 16px;
+    margin-top: 8px;
+    border-radius: var(--radius-md);
+  }
+
+  /* Tighten section padding */
+  .featured { padding: 60px 16px 50px; }
+  .easiest { padding: 30px 12px 60px; }
+  .easiest-grid { padding: 8px; }
+  .easiest-img-wrap { height: 320px; }
+  .stats { padding: 50px 24px; }
+  .creator-cta { padding: 60px 12px; }
+  .creator-card { padding: 40px 24px; }
+  .bp-num { font-size: 72px; }
+}
+
+/* Even smaller phones */
+@media (max-width: 380px) {
+  .hero-content { padding: 90px 18px 70px; }
+  .creator-card { padding: 32px 18px; }
 }

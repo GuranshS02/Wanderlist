@@ -1,6 +1,7 @@
-import User from '../models/User.js';
+import User from '../models/user.js';
 import { registerSchema, loginSchema } from '../utils/validators.js';
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/tokens.js';
+import { sendWelcomeEmail } from '../services/emailService.js';
 
 /**
  * Cookie options for refresh token.
@@ -53,6 +54,10 @@ export const register = async (req, res, next) => {
 
     // Set refresh token as HttpOnly cookie
     res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions);
+
+    // Fire-and-forget welcome email — don't await
+    sendWelcomeEmail({ to: user.email, name: user.name })
+   .catch(err => console.error('Welcome email error:', err));
 
     // Return user info + access token
     res.status(201).json({

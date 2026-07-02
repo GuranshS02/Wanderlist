@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser';
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 import itineraryRoutes from './routes/itineraries.js';
+import orderRoutes from './routes/orders.js';
+import reviewRoutes from './routes/reviews.js';
 
 dotenv.config();
 
@@ -46,6 +48,8 @@ app.get('/api/health', (req, res) => {
 // Auth routes
 app.use('/api/auth', authRoutes);
 app.use('/api/itineraries', itineraryRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api', reviewRoutes);
 
 // 404 handler
 app.use((req, res) => {

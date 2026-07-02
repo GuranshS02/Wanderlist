@@ -1,18 +1,47 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { itineraryApi } from '../lib/itineraryApi';
+import { orderApi } from '../lib/orderApi';
 import useAuthStore from '../store/authStore';
 import './ItineraryPage.css';
+import ReviewForm from '../components/ui/ReviewForm';
+import ReviewList from '../components/ui/ReviewList';
 
 export default function ItineraryPage() {
+  // ─── ALL HOOKS AT THE TOP (Rules of Hooks) ───
   const { id } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['itinerary', id],
     queryFn: () => itineraryApi.get(id),
   });
+
+  const claimMutation = useMutation({
+    mutationFn: () => orderApi.claim(data?.itinerary?._id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-orders'] });
+      queryClient.invalidateQueries({ queryKey: ['itinerary', id] });
+      navigate('/dashboard');
+    },
+    onError: (err) => {
+      const msg = err.response?.data?.error || 'Could not claim itinerary';
+      alert(msg);
+    },
+  });
+
+  // Check if current user already owns this itinerary
+const { data: myOrders } = useQuery({
+  queryKey: ['my-orders'],
+  queryFn: () => orderApi.myOrders(),
+  enabled: isAuthenticated,
+});
+
+const userOwnsIt = !!myOrders?.orders?.find(o =>
+  o.itinerary?._id === data?.itinerary?._id
+);
 
   const itinerary = data?.itinerary;
 
@@ -43,17 +72,17 @@ export default function ItineraryPage() {
     );
   }
 
+  // ─── REGULAR FUNCTIONS (not hooks, safe to put here) ───
   const handleBuy = () => {
     if (!isAuthenticated) {
-      // Send them to login, then back here
       navigate('/login', { state: { from: { pathname: `/itinerary/${id}` } } });
       return;
     }
-    // TODO: Stripe checkout (next step)
-    alert('Checkout coming soon! 🚀');
+    if (window.confirm('Claim this itinerary? (Test mode — no real payment.)')) {
+      claimMutation.mutate();
+    }
   };
 
-  // Format date nicely
   const formattedDate = new Date(itinerary.createdAt).toLocaleDateString('en-US', {
     month: 'long',
     year: 'numeric',
@@ -170,6 +199,24 @@ export default function ItineraryPage() {
               </div>
             </section>
           )}
+
+          {/* ─── REVIEWS SECTION ─── */}
+<section className="itin-section">
+  <h2 className="section-h2">Reviews</h2>
+
+  {/* Show the form only if the user owns the itinerary */}
+  <ReviewForm
+    itineraryId={itinerary._id}
+    userOwnsIt={userOwnsIt}
+  />
+
+  {/* Always show the review list */}
+  <ReviewList
+    itineraryId={itinerary._id}
+    averageRating={itinerary.averageRating}
+    reviewCount={itinerary.reviewCount}
+  />
+</section>
         </div>
 
         {/* ─── RIGHT (sticky buy card) ─── */}
@@ -187,9 +234,19 @@ export default function ItineraryPage() {
               )}
             </div>
 
-            <button className="buy-btn" onClick={handleBuy}>
-              Get this plan →
-            </button>
+            {userOwnsIt ? (
+  <div className="buy-owned-badge">
+    ✓ You own this plan
+  </div>
+) : (
+  <button
+    className="buy-btn"
+    onClick={handleBuy}
+    disabled={claimMutation.isPending}
+  >
+    {claimMutation.isPending ? 'Claiming...' : 'Get this plan →'}
+  </button>
+)}
 
             <div className="buy-features">
               <div className="buy-feature">

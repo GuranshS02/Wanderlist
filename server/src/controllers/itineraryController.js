@@ -168,12 +168,19 @@ export const createItinerary = async (req, res, next) => {
 };
 
 // ─── PUT /api/itineraries/:id ──────────────────────────
-// Auth required — update your own itinerary
+// Auth required — update your own itinerary (accepts ID or slug)
 export const updateItinerary = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const itinerary = await Itinerary.findById(id);
+    // Resolve identifier: try ObjectId first, then slug
+    let itinerary;
+    if (id.match(/^[0-9a-fA-F]{24}$/)) {
+      itinerary = await Itinerary.findById(id);
+    }
+    if (!itinerary) {
+      itinerary = await Itinerary.findOne({ slug: id });
+    }
     if (!itinerary) {
       return res.status(404).json({ error: 'Itinerary not found' });
     }
@@ -199,14 +206,19 @@ export const updateItinerary = async (req, res, next) => {
     next(error);
   }
 };
-
 // ─── DELETE /api/itineraries/:id ───────────────────────
-// Auth required — delete your own itinerary
+// Auth required — soft-delete your own itinerary
 export const deleteItinerary = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const itinerary = await Itinerary.findById(id);
+    let itinerary;
+    if (id.match(/^[0-9a-fA-F]{24}$/)) {
+      itinerary = await Itinerary.findById(id);
+    }
+    if (!itinerary) {
+      itinerary = await Itinerary.findOne({ slug: id });
+    }
     if (!itinerary) {
       return res.status(404).json({ error: 'Itinerary not found' });
     }
@@ -215,7 +227,6 @@ export const deleteItinerary = async (req, res, next) => {
       return res.status(403).json({ error: 'You can only delete your own itineraries' });
     }
 
-    // Soft delete - mark as archived instead of removing
     itinerary.status = 'archived';
     await itinerary.save();
 
